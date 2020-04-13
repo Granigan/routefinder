@@ -6,20 +6,80 @@ const stops = routes.pysakit
 const roads = routes.tiet
 const lines = routes.linjastot
 
-/* slightly more verbose way of findinig roads between stations
-const availableRoadsBetweenStations = stops.map(stop => ({
-  station: stop,
-  routes: roads.filter(road => road.mista === stop).map(road => road.mihin)
-    .concat(roads.filter(road => road.mihin === stop).map(road => road.mista))
-})).reduce((acc, cur) => ({...acc, [cur.station]:cur.routes}), {})
-*/
-
+/* no times, just arrays of destinations
 const availableRoadsBetweenStations = stops.reduce((acc, cur) => ({...acc, 
   [cur]:roads
   .filter(road => road.mista === cur).map(road => road.mihin)
   .concat(roads.filter(road => road.mihin === cur).map(road => road.mista))}), {})
+*/
 
-const availableRoutes = availableRoadsBetweenStations.R
+/*
+const availableRoadsBetweenStations =
+  stops.reduce((acc, cur) => ({
+    ...acc, 
+    [cur]:roads
+    .filter(road => road.mista === cur)
+    .map(road => ({[road.mihin]: road.kesto}))
+    .concat(roads.filter(road => road.mihin === cur)
+    .map(road => ({[road.mista]: road.kesto})))
+  }), 
+  {})
+*/
+  const availableRoadsBetweenStations =
+  stops.reduce((acc, cur) => ({
+    ...acc, [cur]:
+      roads.filter(road => road.mista === cur)
+      .reduce((acc, cur) => ({...acc, [cur.mihin]:cur.kesto}), {})
+  }), 
+  {})
+
+console.log(availableRoadsBetweenStations)
+
+
+  const availableRoadsBetweenStationsReversed = 
+  stops.reduce((acc, cur) => ({
+    ...acc, [cur]:
+      roads.filter(road => road.mihin === cur)
+      .reduce((acc, cur) => ({...acc, [cur.mista]:cur.kesto}), {})
+  }), 
+  {})
+
+console.log(availableRoadsBetweenStationsReversed)
+  
+const availableRoadsBetweenStationsBothWays = 
+  Object.keys(availableRoadsBetweenStations).reduce((acc, cur) => ({...acc, [cur]:{
+    ...availableRoadsBetweenStations[cur], ...availableRoadsBetweenStationsReversed[cur]
+  }}), {})
+
+console.log(availableRoadsBetweenStationsBothWays)
+
+
+const availableRoutesBetweenStations = Object.keys(lines).reduce((acc, line) => acc.concat(lines[line]), [])
+//console.log(availableRoutesBetweenStations)
+
+const yellowRoute = lines.keltainen
+//console.log(yellowRoute)
+const maxIndex = yellowRoute.length
+//console.log(maxIndex)
+
+const availableRoutes = yellowRoute.reduce((acc, cur, index, src) => {
+  //console.log(cur)
+  
+  if(index < maxIndex - 1) {
+    return acc.concat([
+      "kek"
+    ])
+  } else {
+    return acc
+  } 
+  }, []
+)
+
+console.log(availableRoutes)
+
+const bestRoutes = availableRoadsBetweenStations.R
+console.log(bestRoutes)
+
 
 let start = ''
 let finish = ''
@@ -41,7 +101,7 @@ function App() {
         Valitse määränpää:
       </p>
       <p>
-        Nopein reitti: {availableRoutes}
+        Nopein reitti: 
       </p>
     </div>
   );
