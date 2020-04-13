@@ -1,24 +1,19 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+//import './App.css';
+import routes from './data/reittiopas.json'
+
+const stops = routes.pysakit
+const roads = routes.tiet
+console.log(roads)
+const lines = routes.linjastot
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header className="Reittiopas">
+      Reittiopas
       </header>
+      Pysäkit: {stops}
     </div>
   );
 }
