@@ -2,27 +2,88 @@ import React from 'react';
 //import './App.css';
 import routes from './data/reittiopas.json'
 
-const stops = routes.pysakit
+const stations = routes.pysakit
 const roads = routes.tiet
 const lines = routes.linjastot
 
-const lineReduce = lineStations => 
-  lineStations.reduce((acc, stop, index, src) => 
+const getRoutesForLine = lineStations => 
+  lineStations.reduce((acc, stop, index) => 
     index < lineStations.length - 1 
       ? acc.concat([stop+lineStations[index+1], lineStations[index+1]+stop]) 
       : acc
     , [])
 
-const linesAvailable = 
-  Object.keys(lines).reduce((acc, color) => 
-  acc.concat(lineReduce(lines[color])), [])
-    
-console.log(linesAvailable)
+const routesAvailable = 
+  Array.from(new Set(Object.keys(lines).reduce((acc, color) => 
+  acc.concat(getRoutesForLine(lines[color])), [])))
+  
+const routeExists = (origin, destination) => routesAvailable.includes(origin+destination)
 
-const routeExists = (from, to) => linesAvailable.includes(from+to)
+const findDuration = route =>
+  roads.filter(road => 
+    road.mista == route.substring(0,1) && road.mihin == route.substring(1,2) ||
+    road.mihin == route.substring(0,1) && road.mista == route.substring(1,2) )
+    .map(road => road.kesto)[0]
+
+const findColour = route =>
+  Object.keys(lines).reduce((acc, colour) => {
+    return getRoutesForLine(lines[colour]).includes(route) ? acc.concat([colour]) : acc    
+  }, [])
+
+const findNeighbours = station => 
+    Array.from(new Set(routesAvailable.filter(route => route
+    .includes(station))
+    .map(route => 
+      route.substring(0,1)===station ? route.substring(1,2) : route.substring(0,1))
+  ))
+
+const routeDetails = routesAvailable.map(route => ({
+  [route]: {
+    origin: route.substring(0,1), 
+    destination: route.substring(1,2,), 
+    duration: findDuration(route),
+    colours: findColour(route)}
+}))
+
+const stationTracking = stations.map(station => 
+  ({[station]: {visited: false, distanceFromOrigin: Number.MAX_SAFE_INTEGER, arrivedFrom: null }}))
+
+
+const stationDetails = stations.map(station => 
+  ({[station]: {neighbours: findNeighbours(station)}}))
+
+console.log(stationDetails, stationTracking, routeDetails)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const availableRoadsBetweenStations =
-  stops.reduce((acc, cur) => ({
+  stations.reduce((acc, cur) => ({
     ...acc, [cur]:
       roads.filter(road => road.mista === cur)
       .reduce((acc, cur) => ({...acc, [cur.mihin]:cur.kesto}), {})
@@ -30,7 +91,7 @@ const availableRoadsBetweenStations =
   {})
 
 const availableRoadsBetweenStationsReversed = 
-  stops.reduce((acc, cur) => ({
+  stations.reduce((acc, cur) => ({
     ...acc, [cur]:
       roads.filter(road => road.mihin === cur)
       .reduce((acc, cur) => ({...acc, [cur.mista]:cur.kesto}), {})
@@ -75,7 +136,7 @@ const listRoutesPerLineReversed = lineName => {
 }
 
 const availableRoutes =
-  stops.reduce((acc, cur) => ({...acc, [cur]:{
+  stations.reduce((acc, cur) => ({...acc, [cur]:{
     ...listRoutesPerLine("keltainen")[cur], 
     ...listRoutesPerLineReversed("keltainen")[cur], 
     ...listRoutesPerLine("sininen")[cur],
@@ -97,7 +158,7 @@ function App() {
       Reittiopas
       </header>
       <p>
-        Pysäkit: {stops}
+        Pysäkit: {stations}
       </p>
       <p>
         Valitse lähtöpiste: {origin}
