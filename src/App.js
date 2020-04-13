@@ -27,32 +27,54 @@ const availableRoadsBetweenStationsBothWays =
     ...availableRoadsBetweenStations[cur], ...availableRoadsBetweenStationsReversed[cur]
   }}), {})
 
-console.log(availableRoadsBetweenStationsBothWays)
 
-const yellowRoute = lines.keltainen
-//console.log(yellowRoute)
-const maxIndex = yellowRoute.length
-//console.log(maxIndex)
 
-const availableRoutes = yellowRoute.reduce((acc, cur, index, src) => {
-  if(index < maxIndex - 1) {
-    
-    return {...acc, [cur]:{[src[index+1]]:["keltainen"]} }
-  } else {
-    return acc
-  } 
-  }, {}
-)
+const listRoutesPerLine = lineName => {
+  const curRoute = lines[lineName]
+  const maxIndex = curRoute.length
 
-console.log(availableRoutes)
+  return curRoute.reduce((acc, cur, index, src) => {
+    if(index < maxIndex - 1) {
+      return {...acc, 
+        [cur]:{[src[index+1]]:[lineName]},
+      }
+    } else {
+      return acc
+    }
+    }, {}
+  )
+}
 
-const bestRoutes = availableRoadsBetweenStationsBothWays.R.D
-//console.log(bestRoutes)
-const chosenLine = availableRoutes.E.F
+const listRoutesPerLineReversed = lineName => {
+  const curRoute = lines[lineName]
+  const maxIndex = curRoute.length
 
-let start = ''
-let finish = ''
+  return curRoute.reduce((acc, cur, index, src) => {
+    if(index < maxIndex - 1) {
+      return {...acc, 
+        [src[index+1]]:{[cur]:[lineName]}
+      }
+    } else {
+      return acc
+    }
+    }, {}
+  )
+}
 
+const availableRoutes =
+  stops.reduce((acc, cur) => ({...acc, [cur]:{
+    ...listRoutesPerLine("keltainen")[cur], 
+    ...listRoutesPerLineReversed("keltainen")[cur], 
+    ...listRoutesPerLine("sininen")[cur],
+    ...listRoutesPerLineReversed("sininen")[cur],
+    ...listRoutesPerLine("punainen")[cur],
+    ...listRoutesPerLineReversed("punainen")[cur],
+    ...listRoutesPerLine("vihreä")[cur],
+    ...listRoutesPerLineReversed("vihreä")[cur]
+}}), {})
+
+let origin = 'C'
+let destination = 'D'
 
 function App() {
   return (
@@ -64,13 +86,13 @@ function App() {
         Pysäkit: {stops}
       </p>
       <p>
-        Valitse lähtöpiste:
+        Valitse lähtöpiste: {origin}
       </p>
       <p>
-        Valitse määränpää:
+        Valitse määränpää: {destination}
       </p>
       <p>
-        Nopein reitti: {bestRoutes} {chosenLine}
+        Nopein reitti: {availableRoutes[origin][destination]} {availableRoadsBetweenStationsBothWays[origin][destination]} 
       </p>
     </div>
   );
