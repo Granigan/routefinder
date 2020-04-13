@@ -6,6 +6,21 @@ const stops = routes.pysakit
 const roads = routes.tiet
 const lines = routes.linjastot
 
+const lineReduce = lineStations => 
+  lineStations.reduce((acc, stop, index, src) => 
+    index < lineStations.length - 1 
+      ? acc.concat([stop+lineStations[index+1], lineStations[index+1]+stop]) 
+      : acc
+    , [])
+
+const linesAvailable = 
+  Object.keys(lines).reduce((acc, color) => 
+  acc.concat(lineReduce(lines[color])), [])
+    
+console.log(linesAvailable)
+
+const routeExists = (from, to) => linesAvailable.includes(from+to)
+
 const availableRoadsBetweenStations =
   stops.reduce((acc, cur) => ({
     ...acc, [cur]:
@@ -26,8 +41,6 @@ const availableRoadsBetweenStationsBothWays =
   Object.keys(availableRoadsBetweenStations).reduce((acc, cur) => ({...acc, [cur]:{
     ...availableRoadsBetweenStations[cur], ...availableRoadsBetweenStationsReversed[cur]
   }}), {})
-
-
 
 const listRoutesPerLine = lineName => {
   const curRoute = lines[lineName]
@@ -73,8 +86,9 @@ const availableRoutes =
     ...listRoutesPerLineReversed("vihreä")[cur]
 }}), {})
 
-let origin = 'C'
-let destination = 'D'
+
+let origin = 'G'
+let destination = 'F'
 
 function App() {
   return (
@@ -92,7 +106,11 @@ function App() {
         Valitse määränpää: {destination}
       </p>
       <p>
-        Nopein reitti: {availableRoutes[origin][destination]} {availableRoadsBetweenStationsBothWays[origin][destination]} 
+        Nopein reitti: 
+        {origin === destination ? "Lähtöpiste ja määränpää ovat samat." :
+        routeExists(origin, destination) ? "Suora reitti löytyy!" : "Suoraa reittiä ei ole"}
+        {availableRoutes[origin][destination]} 
+        {availableRoadsBetweenStationsBothWays[origin][destination]} 
       </p>
     </div>
   );
