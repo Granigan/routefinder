@@ -44,14 +44,80 @@ const routeDetails = routesAvailable.reduce( (acc, route) => ({...acc,
     colours: findColour(route)}
 }), {})
 
-const stationTracking = stations.map(station => 
-  ({[station]: {visited: false, distanceFromOrigin: Number.MAX_SAFE_INTEGER, arrivedFrom: null }}))
+const createStationStatusObject = () => stations.reduce((acc, station) => 
+  ({...acc, [station]: {
+    visited: false, 
+    durationFromOrigin: Number.MAX_SAFE_INTEGER, 
+    arrivedFrom: null }}), {})
 
-const stationDetails = stations.map(station => 
-  ({[station]: {neighbours: findNeighbours(station)}}))
+const neighbourList = stations.reduce( (acc, station) => ({...acc, 
+  [station]: findNeighbours(station)
+  }), {})
 
 let origin = 'A'
-let destination = 'C'
+let destination = 'F'
+
+
+const findShortestRoute = (origin, destination) => {
+  const stationStatusObject = createStationStatusObject()
+  
+  // lisää eka, merkkaa ekaan tiedot "duration 0", "arrivedFrom"="isOrigin"
+  let currentStation = [origin]
+  
+  stationStatusObject[currentStation] = {
+    ...stationStatusObject[currentStation], 
+    visited: true, 
+    distanceFromOrigin: 0,
+    arrivedFrom: "isOrigin"
+  }
+  
+  while(true) {
+    if(currentStation === destination) {
+      //-> current === destination, backtrackaa reitti ja raportoi tulos
+      return {
+        to: destination,
+        from: origin,
+        duration: stationStatusObject[currentStation].durationFromOrigin
+      }
+    }
+    
+    //1. hae naapurit
+    const neighbours = neighbourList[currentStation]
+    console.log(neighbours)
+    
+    currentStation = neighbours
+    .sort((a, b) => 
+      routeDetails[currentStation+a].duration - routeDetails[currentStation+b].duration)
+    .map(n => {
+      const tentativeDuration = routeDetails[currentStation+n].duration 
+      + stationStatusObject[currentStation].distanceFromOrigin
+      
+      if(tentativeDuration < stationStatusObject[n].distanceFromOrigin) {
+        stationStatusObject[n] = {
+          ...stationStatusObject[n],
+          distanceFromOrigin: tentativeDuration,
+          arrivedFrom: n
+        }
+      }
+      return n
+    }).filter(n => !stationStatusObject[n].visited)[0]
+    
+    console.log(currentStation)
+  }
+    
+    /*2. käy naapurit läpi ja merkkaa lyhyin matka ja reitti:
+        - duration="currentStationDuration"+kaari currentStation+NeighbourStation.duration
+        - "arrivedFrom"=current*/
+      //3. siirry lähimpänä olevaan käymättömään naapuriiin ja merkkaa "visited"=true 
+      
+     //*. jos naapureissa on käyty tai reitti niihin on pidempi, ei reittiä löydy
+ // }
+  
+}
+
+
+
+
 
 function App() {
   return (
@@ -69,11 +135,14 @@ function App() {
         Valitse määränpää: {destination}
       </p>
       <p>
-        Nopein reitti: 
+        Suora reitti: 
         {origin === destination ? "Lähtöpiste ja määränpää ovat samat." :
         !routeExists(origin, destination) ? "Suoraa reittiä ei ole" :
         `Suora reitti löytyy! Reitillä kulkee ${routeDetails[origin+destination].colours} 
         ja matka kestää ${routeDetails[origin+destination].duration} minuuttia.`}
+      </p>
+      <p>
+        Nopein reitti: {findShortestRoute(origin, destination).duration}
       </p>
     </div>
   );
