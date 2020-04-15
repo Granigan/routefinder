@@ -7,6 +7,7 @@ function App() {
   const roads = routes.tiet
   const lines = routes.linjastot
   const [routeTaken, setRouteTaken] = useState([])
+  const [tripDuration, setTripDuration] = useState('')
   const [origin, setOrigin] = useState('')
   const [destination, setDestination] = useState('')
 
@@ -124,6 +125,7 @@ function App() {
         visited: true,
       }
       if (currentStation === destination) {
+        setTripDuration(stationStatusObject[currentStation].durationFromOrigin)
         return {
           to: destination,
           from: origin,
@@ -191,7 +193,7 @@ function App() {
       <button onClick={() => findShortestRoute(origin, destination)}>
         Etsi reitti
       </button>
-      <p>Nopein reitti: {routeTaken}</p>
+      <p>Nopein reitti: {routeTaken} kestää {tripDuration}</p>
     </div>
   )
 }
