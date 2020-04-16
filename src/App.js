@@ -186,10 +186,10 @@ const RouteFinder = () => {
       <Container>
         {StationButtons(
           stations,
-          destination,
           origin,
-          setDestination,
-          setOrigin
+          destination,
+          setOrigin,
+          setDestination
         )}
       </Container>
       <div>
@@ -199,7 +199,7 @@ const RouteFinder = () => {
         {tripDuration > 0 ? `Pysäkkien väleillä kulkevat: ${lineOptions}` : ''}
       </div>
       <div>
-        {origin} {destination}
+        {`Origin: ${origin} Destination: ${destination}`}
       </div>
       <Button onClick={() => findShortestRoute(origin, destination)}>
         Etsi reitti
@@ -212,11 +212,14 @@ const StationButtons = (stations, origin, destination, setOrigin, setDestination
 
   const selectStation = (station) => {
     if (origin === '') {
+      console.log("origin is empty")
       setOrigin(station)
-      console.log('always origin', origin)
     } else if (destination === '') {
+      console.log(("destination is empty"))
+      
       setDestination(station)
     } else {
+      console.log("both exist")
       setOrigin(destination)
       setDestination(station)
     }
