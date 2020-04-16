@@ -1,43 +1,19 @@
 import React, { useState } from 'react'
 import routes from './data/reittiopas.json'
-import { Container, ButtonGroup, Button, Grid, Input } from '@material-ui/core/'
-import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab/'
+import { Container, Button } from '@material-ui/core/'
+import StationButton from './StationButton'
 
-
-const StationButtonGroup = stations => (
-  <ToggleButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
-      {stationButtons(stations)}
-    </ToggleButtonGroup>
-)
-
-const stationButtons = (stations, destination, origin, setDestination, setOrigin) => {
-  const selectStation = (station) => {
-    if(origin==='') {
-      setOrigin(station)
-    } else if (destination === '') {
-      setDestination(station)
-    } else {
-      setOrigin(destination)
-      setDestination(station)
-    }
-  }
-  
-  return stations.map(s => 
-    <ToggleButton value={s} key={s} >
-      {s}
-    </ToggleButton>)
-}
-
-const App = () => {
-  const [routeTaken, setRouteTaken] = useState([])
-  const [tripDuration, setTripDuration] = useState('')
+const RouteFinder = () => {
   const [origin, setOrigin] = useState('')
   const [destination, setDestination] = useState('')
+  const [routeTaken, setRouteTaken] = useState([])
+  const [tripDuration, setTripDuration] = useState('')
   const [lineOptions, setLineOptions] = useState('')
+  
   const stations = routes.pysakit
   const roads = routes.tiet
   const lines = routes.linjastot
-
+  
   const getRoutesForLine = (lineStations) =>
     lineStations.reduce(
       (acc, stop, index) =>
@@ -49,7 +25,7 @@ const App = () => {
           : acc,
       []
     )
-
+  
   const routesAvailable = Array.from(
     new Set(
       Object.keys(lines).reduce(
@@ -58,7 +34,7 @@ const App = () => {
       )
     )
   )
-
+  
   const findDuration = (route) =>
     roads
       .filter(
@@ -69,14 +45,14 @@ const App = () => {
             road.mista === route.substring(1, 2))
       )
       .map((road) => road.kesto)[0]
-
+  
   const findColour = (route) =>
     Object.keys(lines).reduce((acc, colour) => {
       return getRoutesForLine(lines[colour]).includes(route)
         ? acc.concat([colour])
         : acc
     }, [])
-
+  
   const findNeighbours = (station) =>
     Array.from(
       new Set(
@@ -89,7 +65,7 @@ const App = () => {
           )
       )
     )
-
+  
   const routeDetails = routesAvailable.reduce(
     (acc, route) => ({
       ...acc,
@@ -102,7 +78,7 @@ const App = () => {
     }),
     {}
   )
-
+  
   const createStationStatusObject = () =>
     stations.reduce(
       (acc, station) => ({
@@ -115,12 +91,12 @@ const App = () => {
       }),
       {}
     )
-
+  
   const neighbourList = stations.reduce(
     (acc, station) => ({ ...acc, [station]: findNeighbours(station) }),
     {}
   )
-
+  
   const createLineOptions = (route) =>
     setLineOptions(
       route.reduce(
@@ -134,23 +110,23 @@ const App = () => {
         ''
       )
     )
-
+  
   const backtrackRoute = (currentStation, stationStatusObject) => {
     let route = []
     let curStation = currentStation
-
+  
     while (stationStatusObject[curStation].arrivedFrom !== 'isOrigin') {
       route = route.concat(curStation)
       curStation = stationStatusObject[curStation].arrivedFrom
     }
-
+  
     route = route.concat(curStation).reverse()
-
+  
     setRouteTaken(route)
     createLineOptions(route)
     return route
   }
-
+  
   const findShortestRoute = (origin, destination) => {
     const stationStatusObject = createStationStatusObject()
     let currentStation = origin
@@ -160,7 +136,7 @@ const App = () => {
       durationFromOrigin: 0,
       arrivedFrom: 'isOrigin',
     }
-
+  
     while (true) {
       stationStatusObject[currentStation] = {
         ...stationStatusObject[currentStation],
@@ -175,12 +151,12 @@ const App = () => {
           routeTaken: backtrackRoute(currentStation, stationStatusObject),
         }
       }
-
+  
       neighbourList[currentStation].forEach((n) => {
         const tentativeDuration =
           routeDetails[currentStation + n].duration +
           stationStatusObject[currentStation].durationFromOrigin
-
+  
         if (tentativeDuration < stationStatusObject[n].durationFromOrigin) {
           stationStatusObject[n] = {
             ...stationStatusObject[n],
@@ -189,7 +165,7 @@ const App = () => {
           }
         }
       })
-
+  
       const nextStation = stations
         .filter((n) => !stationStatusObject[n].visited)
         .sort(
@@ -197,56 +173,59 @@ const App = () => {
             stationStatusObject[a].durationFromOrigin -
             stationStatusObject[b].durationFromOrigin
         )[0]
-
+  
       currentStation = nextStation
     }
   }
-
-  const handleOriginChange = (value) => setOrigin(value.toUpperCase())
-  const handleDestinationChange = (value) => setDestination(value.toUpperCase())
-
+  
   return (
     <Container>
       <div>
         <h1 className="Reittiopas">Esdger-reittihaku</h1>
       </div>
       <Container>
-        {StationButtonGroup(stations, origin, destination, setOrigin, setDestination)}
+        {StationButtons(
+          stations,
+          destination,
+          origin,
+          setDestination,
+          setOrigin
+        )}
       </Container>
-          <div>
-            {tripDuration === ''
-              ? ''
-              : `Nopein reitti on ${routeTaken}, ja kestää ${tripDuration} minuuttia.`}
-          </div>
-          <div>
-            {tripDuration > 0
-              ? `Pysäkkien väleillä kulkevat: ${lineOptions}`
-              : ''}
-          </div>
-      
-          <div>
-            <Input
-              placeholder="Origin"
-              type="text"
-              name="Valitse lähtöpiste:"
-              value={origin}
-              maxLength="1"
-              onChange={({ target }) => handleOriginChange(target.value)}
-              ></Input>
-            <Input
-              placeholder="Destination"
-              type="text"
-              name="Valitse määränpää:"
-              value={destination}
-              maxLength="1"
-              onChange={({ target }) => handleDestinationChange(target.value)}
-              ></Input>
-          </div>
-          <Button onClick={() => findShortestRoute(origin, destination)}>
-            Etsi reitti
-          </Button>
+      <div>
+        {tripDuration === ''
+          ? ''
+          : `Nopein reitti on ${routeTaken}, ja kestää ${tripDuration} minuuttia.`}
+        {tripDuration > 0 ? `Pysäkkien väleillä kulkevat: ${lineOptions}` : ''}
+      </div>
+      <div>
+        {origin} {destination}
+      </div>
+      <Button onClick={() => findShortestRoute(origin, destination)}>
+        Etsi reitti
+      </Button>
     </Container>
-  )
+    )
 }
+
+const StationButtons = (stations, origin, destination, setOrigin, setDestination) => {
+
+  const selectStation = (station) => {
+    if (origin === '') {
+      setOrigin(station)
+      console.log('always origin', origin)
+    } else if (destination === '') {
+      setDestination(station)
+    } else {
+      setOrigin(destination)
+      setDestination(station)
+    }
+  }
+
+  return stations.map((station) => StationButton(station, selectStation))
+}
+
+const App = () => <RouteFinder />
+
 
 export default App
