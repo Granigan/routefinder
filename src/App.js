@@ -10,6 +10,7 @@ function App() {
   const [tripDuration, setTripDuration] = useState('')
   const [origin, setOrigin] = useState('')
   const [destination, setDestination] = useState('')
+  const [lineOptions, setLineOptions] = useState('')
 
   const getRoutesForLine = (lineStations) =>
     lineStations.reduce(
@@ -94,6 +95,20 @@ function App() {
     {}
   )
 
+  const createLineOptions = (route) =>
+    setLineOptions(
+      route.reduce(
+        (acc, station, index) =>
+          index < route.length - 1
+            ? acc +
+              `${station}-${route[index + 1]}: ${findColour(
+                station + route[index + 1]
+              )}\n`
+            : acc,
+        ''
+      )
+    )
+
   const backtrackRoute = (currentStation, stationStatusObject) => {
     let route = []
     let curStation = currentStation
@@ -106,6 +121,7 @@ function App() {
     route = route.concat(curStation).reverse()
 
     setRouteTaken(route)
+    createLineOptions(route)
     return route
   }
 
@@ -193,7 +209,16 @@ function App() {
       <button onClick={() => findShortestRoute(origin, destination)}>
         Etsi reitti
       </button>
-      <p>Nopein reitti: {routeTaken} kestää {tripDuration}</p>
+      <p>
+        {tripDuration === ''
+          ? ''
+          : `Nopein reitti on ${routeTaken}, ja kestää ${tripDuration} minuuttia.`}
+      </p>
+      <p>
+        {tripDuration === ''
+          ? ''
+          : `Pysäkkien väleillä kulkevat: ${lineOptions}`}
+      </p>
     </div>
   )
 }
