@@ -1,16 +1,42 @@
 import React, { useState } from 'react'
-//import './App.css';
 import routes from './data/reittiopas.json'
+import { Container, ButtonGroup, Button, Grid, Input } from '@material-ui/core/'
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab/'
 
-function App() {
-  const stations = routes.pysakit
-  const roads = routes.tiet
-  const lines = routes.linjastot
+
+const StationButtonGroup = stations => (
+  <ToggleButtonGroup variant="contained" color="primary" aria-label="contained primary button group">
+      {stationButtons(stations)}
+    </ToggleButtonGroup>
+)
+
+const stationButtons = (stations, destination, origin, setDestination, setOrigin) => {
+  const selectStation = (station) => {
+    if(origin==='') {
+      setOrigin(station)
+    } else if (destination === '') {
+      setDestination(station)
+    } else {
+      setOrigin(destination)
+      setDestination(station)
+    }
+  }
+  
+  return stations.map(s => 
+    <ToggleButton value={s} key={s} >
+      {s}
+    </ToggleButton>)
+}
+
+const App = () => {
   const [routeTaken, setRouteTaken] = useState([])
   const [tripDuration, setTripDuration] = useState('')
   const [origin, setOrigin] = useState('')
   const [destination, setDestination] = useState('')
   const [lineOptions, setLineOptions] = useState('')
+  const stations = routes.pysakit
+  const roads = routes.tiet
+  const lines = routes.linjastot
 
   const getRoutesForLine = (lineStations) =>
     lineStations.reduce(
@@ -103,7 +129,7 @@ function App() {
             ? acc +
               `${station}-${route[index + 1]}: ${findColour(
                 station + route[index + 1]
-              )}\n`
+              )} `
             : acc,
         ''
       )
@@ -180,46 +206,46 @@ function App() {
   const handleDestinationChange = (value) => setDestination(value.toUpperCase())
 
   return (
-    <div className="App">
-      <header className="Reittiopas">Reittiopas</header>
-      <p>Pysäkit: {stations}</p>
-      <p>
-        <input
-          type="text"
-          name="Valitse lähtöpiste:"
-          value={origin}
-          maxLength="1"
-          onChange={({ target }) => handleOriginChange(target.value)}
-        ></input>
-      </p>
-      <p>
-        <input
-          type="text"
-          name="Valitse määränpää:"
-          value={destination}
-          maxLength="1"
-          onChange={({ target }) => handleDestinationChange(target.value)}
-        ></input>
-      </p>
-      <p>
-        Lähtöpiste: {origin}
-        <br />
-        Määränpää: {destination}
-      </p>
-      <button onClick={() => findShortestRoute(origin, destination)}>
-        Etsi reitti
-      </button>
-      <p>
-        {tripDuration === ''
-          ? ''
-          : `Nopein reitti on ${routeTaken}, ja kestää ${tripDuration} minuuttia.`}
-      </p>
-      <p>
-        {tripDuration === ''
-          ? ''
-          : `Pysäkkien väleillä kulkevat: ${lineOptions}`}
-      </p>
-    </div>
+    <Container>
+      <div>
+        <h1 className="Reittiopas">Esdger-reittihaku</h1>
+      </div>
+      <Container>
+        {StationButtonGroup(stations, origin, destination, setOrigin, setDestination)}
+      </Container>
+          <div>
+            {tripDuration === ''
+              ? ''
+              : `Nopein reitti on ${routeTaken}, ja kestää ${tripDuration} minuuttia.`}
+          </div>
+          <div>
+            {tripDuration > 0
+              ? `Pysäkkien väleillä kulkevat: ${lineOptions}`
+              : ''}
+          </div>
+      
+          <div>
+            <Input
+              placeholder="Origin"
+              type="text"
+              name="Valitse lähtöpiste:"
+              value={origin}
+              maxLength="1"
+              onChange={({ target }) => handleOriginChange(target.value)}
+              ></Input>
+            <Input
+              placeholder="Destination"
+              type="text"
+              name="Valitse määränpää:"
+              value={destination}
+              maxLength="1"
+              onChange={({ target }) => handleDestinationChange(target.value)}
+              ></Input>
+          </div>
+          <Button onClick={() => findShortestRoute(origin, destination)}>
+            Etsi reitti
+          </Button>
+    </Container>
   )
 }
 
