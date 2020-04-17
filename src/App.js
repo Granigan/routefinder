@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import routes from './data/reittiopas.json'
 import { Container, Button } from '@material-ui/core/'
-import StationButton from './StationButton'
+import StationButtons from './components/StationButtons'
 
 const RouteFinder = () => {
   const [origin, setOrigin] = useState('')
@@ -208,27 +208,6 @@ const RouteFinder = () => {
     )
 }
 
-const StationButtons = (stations, origin, destination, setOrigin, setDestination) => {
-
-  const selectStation = (station) => {
-    if (origin === '') {
-      console.log("origin is empty")
-      setOrigin(station)
-    } else if (destination === '') {
-      console.log(("destination is empty"))
-      
-      setDestination(station)
-    } else {
-      console.log("both exist")
-      setOrigin(destination)
-      setDestination(station)
-    }
-  }
-
-  return stations.map((station) => StationButton(station, selectStation))
-}
-
 const App = () => <RouteFinder />
-
 
 export default App
