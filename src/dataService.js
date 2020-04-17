@@ -65,10 +65,24 @@ export const getNeighbourList = () =>
     {}
   )
 
+export const getRouteDetails = () => getAvailableRoutes().reduce(
+  (acc, route) => ({
+    ...acc,
+    [route]: {
+      origin: route.substring(0, 1),
+      destination: route.substring(1, 2),
+      duration: findDuration(route),
+      colours: findColour(route),
+    },
+  }),
+  {}
+)
+
 export default {
   getStations,
   getAvailableRoutes,
   findDuration,
   findColour,
   getNeighbourList,
+  getRouteDetails,
 }
