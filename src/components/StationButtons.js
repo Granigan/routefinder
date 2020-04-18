@@ -24,16 +24,13 @@ const StationButtons = (
     if (toggledButtons[station]) {
       station === origin ? setOrigin(null) : setDestination(null)
       setToggledButtons({ ...toggledButtons, [station]: false })
-      console.log('1st')
     } else {
       if (origin === null) {
         setOrigin(station)
         setToggledButtons({ ...toggledButtons, [station]: true })
-        console.log('2st')
       } else if (destination === null) {
         setDestination(station)
         setToggledButtons({ ...toggledButtons, [station]: true })
-        console.log('3st')
       } else {
         setOrigin(destination)
         setDestination(station)
@@ -42,7 +39,6 @@ const StationButtons = (
           [station]: true,
           [destination]: true,
         })
-        console.log('4st')
       }
     }
   }
