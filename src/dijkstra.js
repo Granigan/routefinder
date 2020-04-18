@@ -2,7 +2,6 @@ import {
   getStations,
   getNeighbourList,
   getRouteDetails,
-  findColour,
 } from './dataService'
 
 const createStationStatusObject = () =>
@@ -21,9 +20,6 @@ const createStationStatusObject = () =>
 export const findShortestRoute = (
   origin,
   destination,
-  setTripDuration,
-  setRouteTaken,
-  setLineOptions
 ) => {
   let stationStatusObject = createStationStatusObject()
   let currentStation = origin
@@ -40,14 +36,9 @@ export const findShortestRoute = (
       visited: true,
     }
     if (currentStation === destination) {
-      setTripDuration(stationStatusObject[currentStation].durationFromOrigin)
-
-      const route = backtrackRoute(currentStation, stationStatusObject)
-      setRouteTaken(route)
-      createLineOptions(route, setLineOptions)
       return {
         duration: stationStatusObject[currentStation].durationFromOrigin,
-        routeTaken: backtrackRoute(currentStation, stationStatusObject),
+        route: backtrackRoute(currentStation, stationStatusObject),
       }
     }
 
@@ -99,19 +90,5 @@ const backtrackRoute = (finalStation, stationStatusObject) => {
 
   return route.concat(currentStation).reverse()
 }
-
-const createLineOptions = (route, setLineOptions) =>
-  setLineOptions(
-    route.reduce(
-      (acc, station, index) =>
-        index < route.length - 1
-          ? acc +
-            `${station}-${route[index + 1]}: ${findColour(
-              station + route[index + 1]
-            )} `
-          : acc,
-      ''
-    )
-  )
 
 export default findShortestRoute

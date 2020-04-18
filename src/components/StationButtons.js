@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import StationButton from './StationButton'
+import { findShortestRoute} from '../dijkstra'
 
 const StationButtons = (
   stations,
   origin,
   destination,
   setOrigin,
-  setDestination
+  setDestination,
+  setRouteDetails
 ) => {
   const [ToggledButtons, setToggledButtons] = useState(initToggles(stations))
 
@@ -15,7 +17,6 @@ const StationButtons = (
       station === origin ? setOrigin('') : setDestination('')
       setToggledButtons({ ...ToggledButtons, [station]: false})
     } else {
-      console.log(`${station} not checked`, ToggledButtons)
       if (origin === '') {
         setOrigin(station)
         setToggledButtons({ ...ToggledButtons, [station]: true })
@@ -31,6 +32,12 @@ const StationButtons = (
           [destination]: true,
         })
       }
+    }
+    if(origin && destination) {
+      const routeDetails = findShortestRoute(origin, destination)
+      console.log(routeDetails)
+      setRouteDetails(routeDetails)
+      return routeDetails
     }
   }
 

@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
-import { Container, Button } from '@material-ui/core/'
+import { Container } from '@material-ui/core/'
 import StationButtons from './StationButtons'
 import { getStations } from '../dataService'
-import { findShortestRoute } from '../dijkstra'
 
 const RouteFinder = () => {
   const [origin, setOrigin] = useState('')
   const [destination, setDestination] = useState('')
-  const [routeTaken, setRouteTaken] = useState([])
-  const [tripDuration, setTripDuration] = useState('')
-  const [lineOptions, setLineOptions] = useState('')
+  const [routeDetails, setRouteDetails] = useState({})
 
   return (
     <Container>
@@ -23,31 +20,14 @@ const RouteFinder = () => {
           destination,
           setOrigin,
           setDestination,
-          setTripDuration,
-          setRouteTaken,
-          setLineOptions
+          setRouteDetails
         )}
       </Container>
-      <div>
-        {tripDuration === ''
-          ? ''
-          : `Nopein reitti on ${routeTaken}, ja kestää ${tripDuration} minuuttia.`}
-        {tripDuration > 0 ? `Pysäkkien väleillä kulkevat: ${lineOptions}` : ''}
-      </div>
-      <div>{`Origin: ${origin} Destination: ${destination}`}</div>
-      <Button
-        onClick={() =>
-          findShortestRoute(
-            origin,
-            destination,
-            setTripDuration,
-            setRouteTaken,
-            setLineOptions
-          )
-        }
-      >
-        Etsi reitti
-      </Button>
+      <p>
+        {routeDetails.duration
+          ? `Duration: ${routeDetails.duration}, quickest route: ${routeDetails.route}`
+          : ''}
+      </p>
     </Container>
   )
 }
