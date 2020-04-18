@@ -22,7 +22,7 @@ const StationButtons = (
 
   const selectStation = (station) => {
     if (toggledButtons[station]) {
-      getStations() === origin ? setOrigin(null) : setDestination(null)
+      station === origin ? setOrigin(null) : setDestination(null)
       setToggledButtons({ ...toggledButtons, [station]: false })
       console.log('1st')
     } else {
