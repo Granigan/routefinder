@@ -5,6 +5,19 @@ import {
   findColour,
 } from './dataService'
 
+const createStationStatusObject = () =>
+  getStations().reduce(
+    (acc, station) => ({
+      ...acc,
+      [station]: {
+        visited: false,
+        durationFromOrigin: Number.MAX_SAFE_INTEGER,
+        arrivedFrom: null,
+      },
+    }),
+    {}
+  )
+
 export const findShortestRoute = (
   origin,
   destination,
@@ -12,7 +25,7 @@ export const findShortestRoute = (
   setRouteTaken,
   setLineOptions
 ) => {
-  const stationStatusObject = createStationStatusObject()
+  let stationStatusObject = createStationStatusObject()
   let currentStation = origin
   stationStatusObject[currentStation] = {
     ...stationStatusObject[currentStation],
@@ -28,79 +41,63 @@ export const findShortestRoute = (
     }
     if (currentStation === destination) {
       setTripDuration(stationStatusObject[currentStation].durationFromOrigin)
+
+      const route = backtrackRoute(currentStation, stationStatusObject)
+      setRouteTaken(route)
+      createLineOptions(route, setLineOptions)
       return {
-        to: destination,
-        from: origin,
         duration: stationStatusObject[currentStation].durationFromOrigin,
-        routeTaken: backtrackRoute(
-          currentStation,
-          stationStatusObject,
-          setRouteTaken,
-          createLineOptions,
-          setLineOptions
-        ),
+        routeTaken: backtrackRoute(currentStation, stationStatusObject),
       }
     }
 
-    getNeighbourList()[currentStation].forEach((n) => {
-      const tentativeDuration =
-        getRouteDetails()[currentStation + n].duration +
-        stationStatusObject[currentStation].durationFromOrigin
-
-      if (tentativeDuration < stationStatusObject[n].durationFromOrigin) {
-        stationStatusObject[n] = {
-          ...stationStatusObject[n],
-          durationFromOrigin: tentativeDuration,
-          arrivedFrom: currentStation,
-        }
-      }
-    })
-
-    const nextStation = getStations()
-      .filter((n) => !stationStatusObject[n].visited)
-      .sort(
-        (a, b) =>
-          stationStatusObject[a].durationFromOrigin -
-          stationStatusObject[b].durationFromOrigin
-      )[0]
-
-    currentStation = nextStation
+    stationStatusObject = setTentativeDurationsForNeighbours(
+      currentStation,
+      stationStatusObject
+    )
+    currentStation = getNextStation(stationStatusObject)
   }
 }
 
-const createStationStatusObject = () =>
-  getStations().reduce(
-    (acc, station) => ({
-      ...acc,
-      [station]: {
-        visited: false,
-        durationFromOrigin: Number.MAX_SAFE_INTEGER,
-        arrivedFrom: null,
-      },
-    }),
-    {}
-  )
-
-const backtrackRoute = (
+const setTentativeDurationsForNeighbours = (
   currentStation,
-  stationStatusObject,
-  setRouteTaken,
-  createLineOptions,
-  setLineOptions
+  stationStatusObject
 ) => {
-  let route = []
-  let curStation = currentStation
+  getNeighbourList()[currentStation].forEach((n) => {
+    const tentativeDuration =
+      getRouteDetails()[currentStation + n].duration +
+      stationStatusObject[currentStation].durationFromOrigin
 
-  while (stationStatusObject[curStation].arrivedFrom !== 'isOrigin') {
-    route = route.concat(curStation)
-    curStation = stationStatusObject[curStation].arrivedFrom
+    if (tentativeDuration < stationStatusObject[n].durationFromOrigin) {
+      stationStatusObject[n] = {
+        ...stationStatusObject[n],
+        durationFromOrigin: tentativeDuration,
+        arrivedFrom: currentStation,
+      }
+    }
+  })
+  return stationStatusObject
+}
+
+const getNextStation = (stationStatusObject) =>
+  getStations()
+    .filter((n) => !stationStatusObject[n].visited)
+    .sort(
+      (a, b) =>
+        stationStatusObject[a].durationFromOrigin -
+        stationStatusObject[b].durationFromOrigin
+    )[0]
+
+const backtrackRoute = (finalStation, stationStatusObject) => {
+  let route = []
+  let currentStation = finalStation
+
+  while (stationStatusObject[currentStation].arrivedFrom !== 'isOrigin') {
+    route = route.concat(currentStation)
+    currentStation = stationStatusObject[currentStation].arrivedFrom
   }
 
-  route = route.concat(curStation).reverse()
-
-  setRouteTaken(route)
-  createLineOptions(route, setLineOptions)
-  return route
+  return route.concat(currentStation).reverse()
 }
 
 const createLineOptions = (route, setLineOptions) =>
