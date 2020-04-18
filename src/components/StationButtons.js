@@ -1,48 +1,54 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import StationButton from './StationButton'
-import { findShortestRoute} from '../dijkstra'
+import { findShortestRoute } from '../dijkstra'
+import { getStations } from '../dataService'
 
 const StationButtons = (
-  stations,
   origin,
   destination,
   setOrigin,
   setDestination,
   setRouteDetails
 ) => {
-  const [ToggledButtons, setToggledButtons] = useState(initToggles(stations))
+  const [toggledButtons, setToggledButtons] = useState(
+    initToggles(getStations())
+  )
+
+  useEffect(() => {
+    if (origin && destination) {
+      setRouteDetails(() => findShortestRoute(origin, destination))
+    }
+  }, [origin, destination])
 
   const selectStation = (station) => {
-    if (ToggledButtons[station]) {
-      station === origin ? setOrigin('') : setDestination('')
-      setToggledButtons({ ...ToggledButtons, [station]: false})
+    if (toggledButtons[station]) {
+      getStations() === origin ? setOrigin(null) : setDestination(null)
+      setToggledButtons({ ...toggledButtons, [station]: false })
+      console.log('1st')
     } else {
-      if (origin === '') {
+      if (origin === null) {
         setOrigin(station)
-        setToggledButtons({ ...ToggledButtons, [station]: true })
-      } else if (destination === '') {
+        setToggledButtons({ ...toggledButtons, [station]: true })
+        console.log('2st')
+      } else if (destination === null) {
         setDestination(station)
-        setToggledButtons({ ...ToggledButtons, [station]: true })
+        setToggledButtons({ ...toggledButtons, [station]: true })
+        console.log('3st')
       } else {
         setOrigin(destination)
         setDestination(station)
         setToggledButtons({
-          ...initToggles(stations),
+          ...initToggles(getStations()),
           [station]: true,
           [destination]: true,
         })
+        console.log('4st')
       }
-    }
-    if(origin && destination) {
-      const routeDetails = findShortestRoute(origin, destination)
-      console.log(routeDetails)
-      setRouteDetails(routeDetails)
-      return routeDetails
     }
   }
 
-  return stations.map((station) =>
-    StationButton(station, selectStation, ToggledButtons)
+  return getStations().map((station) =>
+    StationButton(station, selectStation, toggledButtons)
   )
 }
 

@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { Container } from '@material-ui/core/'
 import StationButtons from './StationButtons'
-import { getStations } from '../dataService'
+
 
 const RouteFinder = () => {
-  const [origin, setOrigin] = useState('')
-  const [destination, setDestination] = useState('')
+  const [origin, setOrigin] = useState(null)
+  const [destination, setDestination] = useState(null)
   const [routeDetails, setRouteDetails] = useState({})
 
   return (
@@ -15,7 +15,6 @@ const RouteFinder = () => {
       </div>
       <Container>
         {StationButtons(
-          getStations(),
           origin,
           destination,
           setOrigin,
@@ -25,7 +24,7 @@ const RouteFinder = () => {
       </Container>
       <p>
         {routeDetails.duration
-          ? `Duration: ${routeDetails.duration}, quickest route: ${routeDetails.route}`
+          ? `Matka-aika: ${routeDetails.duration}, nopein reitti: ${routeDetails.route}`
           : ''}
       </p>
     </Container>
