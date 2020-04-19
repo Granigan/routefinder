@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Container } from '@material-ui/core/'
 import StationButtons from './StationButtons'
-
+import { createLineOptions } from '../dataService'
 
 const RouteFinder = () => {
   const [origin, setOrigin] = useState(null)
@@ -24,7 +24,9 @@ const RouteFinder = () => {
       </Container>
       <p>
         {routeDetails.duration
-          ? `Matka-aika: ${routeDetails.duration}, nopein reitti: ${routeDetails.route}`
+          ? `Matka-aika: ${
+              routeDetails.duration
+            }, nopein reitti: ${createLineOptions(routeDetails.route)}`
           : ''}
       </p>
     </Container>

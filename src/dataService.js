@@ -39,7 +39,7 @@ export const findDuration = (route) =>
     )
     .map((road) => road.kesto)[0]
 
-export const findColour = (route) =>
+const findColour = (route) =>
   Object.keys(lines).reduce((acc, colour) => {
     return getRoutesForLine(lines[colour]).includes(route)
       ? acc.concat([colour])
@@ -65,24 +65,37 @@ export const getNeighbourList = () =>
     {}
   )
 
-export const getRouteDetails = () => getAvailableRoutes().reduce(
-  (acc, route) => ({
-    ...acc,
-    [route]: {
-      origin: route.substring(0, 1),
-      destination: route.substring(1, 2),
-      duration: findDuration(route),
-      colours: findColour(route),
-    },
-  }),
-  {}
-)
+export const getRouteDetails = () =>
+  getAvailableRoutes().reduce(
+    (acc, route) => ({
+      ...acc,
+      [route]: {
+        origin: route.substring(0, 1),
+        destination: route.substring(1, 2),
+        duration: findDuration(route),
+        colours: findColour(route),
+      },
+    }),
+    {}
+  )
+
+export const createLineOptions = (route) =>
+  route.reduce(
+    (acc, station, index) =>
+      index < route.length - 1
+        ? acc +
+          `${station}-${route[index + 1]}: ${findColour(
+            station + route[index + 1]
+          )} `
+        : acc,
+    ''
+  )
 
 export default {
   getStations,
   getAvailableRoutes,
   findDuration,
-  findColour,
   getNeighbourList,
   getRouteDetails,
+  createLineOptions,
 }
