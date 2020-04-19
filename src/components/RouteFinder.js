@@ -11,7 +11,7 @@ const RouteFinder = () => {
   return (
     <Container>
       <div>
-        <h1>Esdger-reittihaku</h1>
+        <h1>Edsger-reittihaku</h1>
       </div>
       <Container>
         {StationButtons(
