@@ -14,6 +14,11 @@ An entry to [Solidabis Code Challenge](https://koodihaaste.solidabis.com/).
 ## Algorithm
 [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) is used to find the shortest route between selected stations.
 
+## To Do 23.04.2020
+- [ ] Align route visualisation
+- [ ] Make mobile friendly
+- [ ] Add reversal button to swap origin and destination
+
 ## Concerns
 - Lack of colorblind mode potentially makes lines (esp. red and green) indistinguishable
 - Crude appearance
