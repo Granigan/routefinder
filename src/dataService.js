@@ -39,7 +39,7 @@ export const findDuration = (route) =>
     )
     .map((road) => road.kesto)[0]
 
-const findColour = (route) =>
+export const findColour = (route) =>
   Object.keys(lines).reduce((acc, colour) => {
     return getRoutesForLine(lines[colour]).includes(route)
       ? acc.concat([colour])
@@ -97,5 +97,5 @@ export default {
   findDuration,
   getNeighbourList,
   getRouteDetails,
-  createLineOptions,
+  findColour
 }
