@@ -1,15 +1,18 @@
-# Edsger-routefinder 
-An entry to [Solidabis Code Challenge](https://koodihaaste.solidabis.com/). [Test routefinder at Heroku](https://edsger-routefinder.herokuapp.com/).
+# Edsger Routefinder 
+An entry to [Solidabis Code Challenge](https://koodihaaste.solidabis.com/).
 
-## Technnology
-The project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). [Material-UI](https://material-ui.com/) provided some rudimentary styling.
+### [Test routefinder at Heroku](https://edsger-routefinder.herokuapp.com/).
+
+## Technology
+- The project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- [Material-UI](https://material-ui.com/) provided some rudimentary styling.
 
 ## Design Philosophy
 - Focus on providing only the necessary functionality to the user. By cutting away any excess (e.g. typing the station), usability improves and risk of misunderstanding the functionality is reduced.
 - Take advantage of the limited scope to improve usability. Downside is reduced scaleability.
 
 ## Algorithm
-Dijkstra's algorithm is used to find the shortest route between selected stations.
+[Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) is used to find the shortest route between selected stations.
 
 ## Concerns
 - Lack of colorblind mode potentially makes lines (esp. red and green) indistinguishable
@@ -18,7 +21,9 @@ Dijkstra's algorithm is used to find the shortest route between selected station
 
 ## Development
 Clone the repository with
+
 ```git clone git@github.com:Granigan/routefinder.git```
 
 Run in localhost:3000 with
+
 ```npm start```
