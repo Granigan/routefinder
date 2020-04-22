@@ -36,7 +36,7 @@ export const RouteSpecifics = ({ duration, route }) => {
           fontSize="small"
           key={stationToStationRoute + index}
         />
-        {`${stationToStationRoute.substring(1, 2)}` + ':'}{' '}
+        {`${stationToStationRoute.substring(1, 2)}: `}
         {findColour(stationToStationRoute).map((lineOnRoute) =>
           LineIcon(lineOnRoute, stationToStationRoute + lineOnRoute)
         )}
