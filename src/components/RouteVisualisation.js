@@ -20,6 +20,13 @@ const LineIcon = (line, key) => {
 }
 
 export const RouteVisualisation = ({ route }) => {
+  const colorTranslation = {
+    keltainen: 'yellow',
+    punaninen: 'red',
+    sininen: 'blue',
+    vihreä: 'green',
+  }
+
   const stationToStationRoutes = route.reduce(
     (acc, station, index) =>
       index < route.length - 1 ? acc.concat([station + route[index + 1]]) : acc,
