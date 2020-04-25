@@ -6,6 +6,7 @@ An entry to [Solidabis Code Challenge](https://koodihaaste.solidabis.com/).
 ## Technology
 - The project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 - [Material-UI](https://material-ui.com/) provided some rudimentary styling.
+- Development was done on Visual Studio Code, on MacOS.
 
 ## Design Philosophy
 - Focus on providing only the necessary functionality to the user. By cutting away any excess (e.g. typing the station), goal is to improve usability and reduce the risk of misunderstanding the functionality.
