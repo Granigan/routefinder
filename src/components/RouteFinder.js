@@ -18,18 +18,6 @@ const RouteFinder = () => {
     <Container>
       <div>
         <h1>Edsger-setä opastaa!</h1>
-        <p>
-          Vastaus{' '}
-          <a
-            href="https://koodihaaste.solidabis.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {' '}
-            Solidabis-koodihaasteeseen
-          </a>
-          .
-        </p>
       </div>
       <Container>
         {StationButtons(
@@ -45,6 +33,26 @@ const RouteFinder = () => {
         route={routeDetails.route}
         reverseRoute={reverseRoute}
       />
+      <p>
+        Vastaus{' '}
+        <a
+          href="https://koodihaaste.solidabis.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {' '}
+          Solidabis-koodihaasteeseen
+        </a>
+        . Koodikanta{' '}
+        <a
+          href="https://github.com/Granigan/routefinder"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHubissa
+        </a>
+        .
+      </p>
     </Container>
   )
 }
