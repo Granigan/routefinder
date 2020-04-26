@@ -8,6 +8,12 @@ const RouteFinder = () => {
   const [destination, setDestination] = useState(null)
   const [routeDetails, setRouteDetails] = useState({})
 
+  const reverseRoute = () => {
+    const newDestination = origin
+    setOrigin(destination)
+    setDestination(newDestination)
+  }
+
   return (
     <Container>
       <div>
@@ -25,6 +31,7 @@ const RouteFinder = () => {
       <RouteSpecifics
         duration={routeDetails.duration}
         route={routeDetails.route}
+        reverseRoute={reverseRoute}
       />
     </Container>
   )

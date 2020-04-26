@@ -15,10 +15,10 @@ An entry to [Solidabis Code Challenge](https://koodihaaste.solidabis.com/).
 ## Algorithm
 [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) is used to find the shortest route between selected stations.
 
-## To Do 23.04.2020
-- [ ] Align route visualisation
+## To Do 25.04.2020
+- [x] Align route visualisation
 - [x] Make mobile friendly
-- [ ] Add reversal button to swap origin and destination
+- [x] Add reversal button to swap origin and destination
 
 ## Concerns
 - Does implementation match the spec. In particular, do bus lines go both ways (spec doesn't mention they would, nor do the graphics indicate this, but if they don't, a host of destinations cannot be reached at all. Thus, an assumption was made that bus lines go both ways.)
