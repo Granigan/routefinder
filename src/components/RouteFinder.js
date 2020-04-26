@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Container, } from '@material-ui/core/'
+import { Container } from '@material-ui/core/'
 import StationButtons from './StationButtons'
 import RouteSpecifics from './RouteSpecifics'
 
@@ -17,7 +17,19 @@ const RouteFinder = () => {
   return (
     <Container>
       <div>
-        <h1>Ask Edsger!</h1>
+        <h1>Edsger-setä opastaa!</h1>
+        <p>
+          Vastaus{' '}
+          <a
+            href="https://koodihaaste.solidabis.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {' '}
+            Solidabis-koodihaasteeseen
+          </a>
+          .
+        </p>
       </div>
       <Container>
         {StationButtons(
