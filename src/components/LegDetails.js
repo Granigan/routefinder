@@ -1,6 +1,7 @@
 import React from 'react'
 import DirectionsBusIcon from '@material-ui/icons/DirectionsBus'
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward'
+import { TableCell, TableRow } from '@material-ui/core'
 import { green, yellow, red, blue } from '@material-ui/core/colors'
 import { findColour, findDuration } from '../dataService'
 
@@ -26,13 +27,15 @@ export const LegDetails = ({ stationToStationRoute }) => {
   const duration = findDuration(stationToStationRoute)
 
   return (
-    <div>
-      {originStation}
-      <ArrowForwardIcon fontSize="small" />
-      {`${destinationStation}: `}
-      {lineIcon}
-      {` ${duration} min.`}
-    </div>
+    <TableRow>
+      <TableCell>{originStation}</TableCell>
+      <TableCell>
+        <ArrowForwardIcon fontSize="small" align="middle" />
+      </TableCell>
+      <TableCell>{destinationStation}</TableCell>
+      <TableCell>{lineIcon}</TableCell>
+      <TableCell>{` ${duration} min.`}</TableCell>
+    </TableRow>
   )
 }
 
